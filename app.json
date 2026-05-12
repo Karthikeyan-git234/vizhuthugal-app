@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "விழுதுகள்",
+    "slug": "vizhuthugal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+
+    "icon": "./assets/images/logo.png",
+
+    "scheme": "vizhuthgal",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+
+    "ios": {
+      "supportsTablet": true
+    },
+
+    "android": {
+      "package": "com.karthikeyan.jk4153.vizhuthugal",
+
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#ffffff"
+      },
+
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+
+      "@react-native-community/datetimepicker"
+    ],
+
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+
+    "extra": {
+      "router": {},
+
+      "eas": {
+        "projectId": "2135f8d3-0b1b-403a-9117-bd83d9dfe3d7"
+      }
+    }
+  }
+}

@@ -1,461 +1,1694 @@
-import React, { useState, useRef } from 'react'
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+
 import API from '../services/api'
-import { router } from 'expo-router'
+
 import DateTimePicker from '@react-native-community/datetimepicker'
+
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StatusBar,
   Animated,
+  Modal,
+  TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native'
 
 import {
   Ionicons,
   Entypo,
+  MaterialIcons,
 } from '@expo/vector-icons'
 
 import Colors from '../constants/colors'
 
 export default function AttendanceScreen() {
 
-  const [employeeName, setEmployeeName] = useState('')
-  const [workDone, setWorkDone] = useState('')
-  const [showSuccess, setShowSuccess] = useState(false)
+  const [attendance, setAttendance] =
+    useState<any[]>([])
 
-const slideAnim = useRef(
-  new Animated.Value(-100)
-).current
-  const [checkIn, setCheckIn] = useState(new Date())
-  const [checkOut, setCheckOut] = useState(new Date())
+  const [loading, setLoading] =
+    useState(true)
 
-const [showCheckInPicker, setShowCheckInPicker] = useState(false)
-const [showCheckOutPicker, setShowCheckOutPicker] = useState(false)
+  const [modalVisible, setModalVisible] =
+    useState(false)
 
-  const handleSubmit = async () => {
+  const [editMode, setEditMode] =
+    useState(false)
 
-  if (
-    !employeeName ||
-    !checkIn ||
-    !checkOut ||
-    !workDone
-  ) {
-    alert('Please fill all fields')
-    return
-  }
+  const [selectedId, setSelectedId] =
+    useState<number | null>(null)
 
-  try {
+  const [employeeName, setEmployeeName] =
+    useState('')
 
-    await API.post('/work', {
-      employeeName,
-      checkIn,
-      checkOut,
-      workDone,
-    })
+  const [workDone, setWorkDone] =
+    useState('')
+
+  const [search, setSearch] =
+    useState('')
+
+  const [selectedDate, setSelectedDate] =
+    useState<Date | null>(null)
+
+  const [showFilterDatePicker, setShowFilterDatePicker] =
+    useState(false)
+
+  const [showSuccess, setShowSuccess] =
+    useState(false)
+
+  const slideAnim = useRef(
+    new Animated.Value(-120)
+  ).current
+
+  const [checkIn, setCheckIn] =
+    useState(new Date())
+
+  const [checkOut, setCheckOut] =
+    useState(new Date())
+
+  const [
+    showCheckInPicker,
+    setShowCheckInPicker,
+  ] = useState(false)
+
+  const [
+    showCheckOutPicker,
+    setShowCheckOutPicker,
+  ] = useState(false)
+
+  // =====================================
+  // FETCH
+  // =====================================
+
+  const fetchAttendance =
+    async () => {
+
+      try {
+
+        const res =
+          await API.get('/work')
+
+        setAttendance(res.data)
+
+      } catch (err) {
+
+        console.log(err)
+
+      } finally {
+
+        setLoading(false)
+
+      }
+    }
+
+  useEffect(() => {
+
+    fetchAttendance()
+
+  }, [])
+
+  // =====================================
+  // FILTERED DATA
+  // =====================================
+
+  const filteredAttendance =
+    useMemo(() => {
+
+      return attendance.filter(
+        (item) => {
+
+          const matchesSearch =
+
+            item.employee_name
+              ?.toLowerCase()
+              .includes(
+                search.toLowerCase()
+              )
+
+          const matchesDate =
+
+            selectedDate
+              ? new Date(
+                  item.created_at
+                ).toDateString() ===
+                selectedDate.toDateString()
+              : true
+
+          return (
+            matchesSearch &&
+            matchesDate
+          )
+        }
+      )
+
+    }, [
+      attendance,
+      search,
+      selectedDate,
+    ])
+
+  // =====================================
+  // SUCCESS MESSAGE
+  // =====================================
+
+  const showSuccessMessage = () => {
 
     setShowSuccess(true)
 
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start()
+    Animated.timing(
+      slideAnim,
+      {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }
+    ).start()
 
     setTimeout(() => {
 
-      Animated.timing(slideAnim, {
-        toValue: -100,
-        duration: 500,
-        useNativeDriver: true,
-      }).start()
+      Animated.timing(
+        slideAnim,
+        {
+          toValue: -120,
+          duration: 500,
+          useNativeDriver: true,
+        }
+      ).start()
 
-   setTimeout(() => {
+      setTimeout(() => {
 
-  setShowSuccess(false)
+        setShowSuccess(false)
 
-  router.replace('/home')
+      }, 500)
 
-}, 500)
-
-    }, 2500)
-
-  } catch (error: any) {
-
-    alert(
-      error.response?.data?.message ||
-      'Failed to save report'
-    )
+    }, 2200)
   }
-}
+
+  // =====================================
+  // ADD / UPDATE
+  // =====================================
+
+  const handleSubmit =
+    async () => {
+
+      if (
+        !employeeName ||
+        !workDone
+      ) {
+
+        Alert.alert(
+          'Validation',
+          'Fill all fields'
+        )
+
+        return
+      }
+
+      try {
+
+        const payload = {
+
+          employeeName,
+
+          checkIn,
+
+          checkOut,
+
+          workDone,
+
+        }
+
+        if (
+          editMode &&
+          selectedId
+        ) {
+
+          await API.put(
+
+            `/work/${selectedId}`,
+
+            payload
+
+          )
+
+        } else {
+
+          await API.post(
+            '/work',
+            payload
+          )
+        }
+
+        fetchAttendance()
+
+        resetForm()
+
+        showSuccessMessage()
+
+      } catch (error: any) {
+
+        Alert.alert(
+          'Error',
+          error.response?.data
+            ?.message ||
+            'Something went wrong'
+        )
+      }
+    }
+
+  // =====================================
+  // EDIT
+  // =====================================
+
+  const handleEdit = (
+    item: any
+  ) => {
+
+    setEditMode(true)
+
+    setSelectedId(item.id)
+
+    setEmployeeName(
+      item.employee_name
+    )
+
+    setWorkDone(
+      item.work_done
+    )
+
+    setCheckIn(
+      new Date(item.check_in)
+    )
+
+    setCheckOut(
+      new Date(item.check_out)
+    )
+
+    setModalVisible(true)
+  }
+
+  // =====================================
+  // DELETE
+  // =====================================
+
+  const handleDelete =
+    (id: number) => {
+
+      Alert.alert(
+
+        'Delete Attendance',
+
+        'Are you sure?',
+
+        [
+
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+
+          {
+            text: 'Delete',
+
+            style: 'destructive',
+
+            onPress:
+              async () => {
+
+                try {
+
+                  await API.delete(
+                    `/work/${id}`
+                  )
+
+                  fetchAttendance()
+
+                  showSuccessMessage()
+
+                } catch (err) {
+
+                  console.log(err)
+
+                }
+              },
+          },
+        ]
+      )
+    }
+
+  // =====================================
+  // RESET
+  // =====================================
+
+  const resetForm = () => {
+
+    setEmployeeName('')
+
+    setWorkDone('')
+
+    setCheckIn(new Date())
+
+    setCheckOut(new Date())
+
+    setSelectedId(null)
+
+    setEditMode(false)
+
+    setModalVisible(false)
+  }
 
   return (
 
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-<StatusBar
-  barStyle="dark-content"
-  
-/>
-{
-  showSuccess && (
+    <View style={styles.container}>
 
-    <Animated.View
-      style={[
-        styles.successBox,
-        {
-          transform: [
-            { translateY: slideAnim }
-          ]
-        }
-      ]}
-    >
-
-      <Ionicons
-        name="checkmark-circle"
-        size={24}
-        color="#fff"
+      <StatusBar
+        barStyle="dark-content"
       />
 
-      <Text style={styles.successText}>
-        Attendance Submitted Successfully
-      </Text>
+      {/* Success */}
 
-    </Animated.View>
+      {
+        showSuccess && (
 
-  )
-}
+          <Animated.View
+
+            style={[
+
+              styles.successBox,
+
+              {
+                transform: [
+                  {
+                    translateY:
+                      slideAnim,
+                  },
+                ],
+              },
+
+            ]}
+          >
+
+            <Ionicons
+              name="checkmark-circle"
+              size={22}
+              color="#fff"
+            />
+
+            <Text
+              style={
+                styles.successText
+              }
+            >
+
+              Action Completed Successfully
+
+            </Text>
+
+          </Animated.View>
+        )
+      }
 
       {/* Header */}
+
       <View style={styles.header}>
 
         <View>
 
           <Text style={styles.heading}>
+
             Attendance
+
           </Text>
 
-          <Text style={styles.subHeading}>
-            Fill daily attendance details
+          <Text
+            style={
+              styles.subHeading
+            }
+          >
+
+            Employee attendance records
+
           </Text>
 
         </View>
 
-        <View style={styles.headerIcon}>
+        <View
+          style={
+            styles.headerIcon
+          }
+        >
 
           <Entypo
             name="calendar"
-            size={28}
-            color={Colors.white}
+            size={24}
+            color="#fff"
           />
 
         </View>
 
       </View>
 
-      {/* Form Card */}
-      <View style={styles.card}>
+      {/* Search */}
 
-        {/* Employee Name */}
-        <Text style={styles.label}>
-          Employee Name
-        </Text>
+      <View style={styles.searchContainer}>
 
-        <View style={styles.inputContainer}>
+        <Ionicons
+          name="search"
+          size={20}
+          color={Colors.gray}
+        />
 
-          <Ionicons
-            name="person-outline"
-            size={20}
-            color={Colors.gray}
-          />
+        <TextInput
+          placeholder="Search employee..."
+          placeholderTextColor={
+            Colors.gray
+          }
+          style={styles.searchInput}
+          value={search}
+          onChangeText={setSearch}
+        />
 
-          <TextInput
-            placeholder="Enter employee name"
-            placeholderTextColor={Colors.gray}
-            style={styles.input}
-            value={employeeName}
-            onChangeText={setEmployeeName}
-          />
+      </View>
 
-        </View>
+      {/* Filter */}
 
-       {/* Check In */}
-<Text style={styles.label}>
-  Check In Time
-</Text>
+      <TouchableOpacity
 
-<TouchableOpacity
-  style={styles.inputContainer}
-  onPress={() => setShowCheckInPicker(true)}
->
+        style={styles.filterButton}
 
-  <Ionicons
-    name="time-outline"
-    size={20}
-    color={Colors.gray}
-  />
-
-  <Text style={styles.timeText}>
-    {checkIn.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    })}
-  </Text>
-
-</TouchableOpacity>
-
-{
-  showCheckInPicker && (
-    <DateTimePicker
-      value={checkIn}
-      mode="time"
-      is24Hour={false}
-      display="default"
-      onChange={(event, selectedDate) => {
-
-        setShowCheckInPicker(false)
-
-        if (selectedDate) {
-          setCheckIn(selectedDate)
+        onPress={() =>
+          setShowFilterDatePicker(
+            true
+          )
         }
+      >
 
-      }}
-    />
-  )
-}
+        <Ionicons
+          name="calendar-outline"
+          size={18}
+          color="#fff"
+        />
 
-       {/* Check Out */}
-<Text style={styles.label}>
-  Check Out Time
-</Text>
-
-<TouchableOpacity
-  style={styles.inputContainer}
-  onPress={() => setShowCheckOutPicker(true)}
->
-
-  <Ionicons
-    name="time-outline"
-    size={20}
-    color={Colors.gray}
-  />
-
-  <Text style={styles.timeText}>
-    {checkOut.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    })}
-  </Text>
-
-</TouchableOpacity>
-
-{
-  showCheckOutPicker && (
-    <DateTimePicker
-      value={checkOut}
-      mode="time"
-      is24Hour={false}
-      display="default"
-      onChange={(event, selectedDate) => {
-
-        setShowCheckOutPicker(false)
-
-        if (selectedDate) {
-          setCheckOut(selectedDate)
-        }
-
-      }}
-    />
-  )
-}
-        </View>
-
-        {/* Work Done */}
-        <Text style={styles.label}>
-          Work Done Today
-        </Text>
-
-  <TextInput
-  placeholder="Describe today's work..."
-  placeholderTextColor={Colors.gray}
-
-  multiline
-
-  numberOfLines={6}
-
-  maxLength={100}
-
-  textAlignVertical="top"
-
-  style={styles.textArea}
-
-  value={workDone}
-
-  onChangeText={setWorkDone}
-/>
-
-<Text style={styles.charCount}>
-  {workDone.length}/100 Characters
-</Text>
-
-        {/* Submit */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSubmit}
+        <Text
+          style={
+            styles.filterText
+          }
         >
 
-          <Ionicons
-            name="checkmark-circle"
-            size={22}
-            color={Colors.white}
+          {
+            selectedDate
+              ? selectedDate.toDateString()
+              : 'Filter By Date'
+          }
+
+        </Text>
+
+      </TouchableOpacity>
+
+      {
+        showFilterDatePicker && (
+
+          <DateTimePicker
+            value={
+              selectedDate ||
+              new Date()
+            }
+            mode="date"
+            onChange={(
+              e,
+              date
+            ) => {
+
+              setShowFilterDatePicker(
+                false
+              )
+
+              if (date) {
+
+                setSelectedDate(
+                  date
+                )
+              }
+            }}
           />
+        )
+      }
 
-          <Text style={styles.buttonText}>
-            Submit Attendance
-          </Text>
+      {/* Clear Filter */}
 
-        </TouchableOpacity>
+      {
+        selectedDate && (
 
-    </ScrollView>
+          <TouchableOpacity
+
+            style={
+              styles.clearButton
+            }
+
+            onPress={() =>
+              setSelectedDate(
+                null
+              )
+            }
+          >
+
+            <Text
+              style={
+                styles.clearText
+              }
+            >
+
+              Clear Date Filter
+
+            </Text>
+
+          </TouchableOpacity>
+        )
+      }
+
+      {/* List */}
+
+      <ScrollView
+        showsVerticalScrollIndicator={
+          false
+        }
+      >
+
+        {
+          loading ? (
+
+            <ActivityIndicator
+              size="large"
+              color={
+                Colors.primary
+              }
+              style={{
+                marginTop: 60,
+              }}
+            />
+
+          ) : filteredAttendance.length === 0 ? (
+
+            <View
+              style={
+                styles.emptyContainer
+              }
+            >
+
+              <Ionicons
+                name="document-text-outline"
+                size={80}
+                color="#cbd5e1"
+              />
+
+              <Text
+                style={
+                  styles.emptyTitle
+                }
+              >
+
+                No Records Found
+
+              </Text>
+
+            </View>
+
+          ) : (
+
+            filteredAttendance.map(
+              (
+                item,
+                index
+              ) => (
+
+                <View
+                  key={index}
+                  style={
+                    styles.card
+                  }
+                >
+
+                  {/* Top */}
+
+                  <View
+                    style={
+                      styles.cardTop
+                    }
+                  >
+
+                    <View
+                      style={
+                        styles.avatar
+                      }
+                    >
+
+                      <Text
+                        style={
+                          styles.avatarText
+                        }
+                      >
+
+                        {
+                          item.employee_name?.charAt(
+                            0
+                          )
+                        }
+
+                      </Text>
+
+                    </View>
+
+                    <View
+                      style={{
+                        flex: 1,
+                      }}
+                    >
+
+                      <Text
+                        style={
+                          styles.employeeName
+                        }
+                      >
+
+                        {
+                          item.employee_name
+                        }
+
+                      </Text>
+
+                      <Text
+                        style={
+                          styles.dateText
+                        }
+                      >
+
+                        {
+                          new Date(
+                            item.created_at
+                          ).toDateString()
+                        }
+
+                      </Text>
+
+                    </View>
+
+                    {/* Actions */}
+
+                    <View
+                      style={
+                        styles.actionRow
+                      }
+                    >
+
+                      <TouchableOpacity
+
+                        style={
+                          styles.editButton
+                        }
+
+                        onPress={() =>
+                          handleEdit(
+                            item
+                          )
+                        }
+                      >
+
+                        <MaterialIcons
+                          name="edit"
+                          size={18}
+                          color="#2563eb"
+                        />
+
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+
+                        style={
+                          styles.deleteButton
+                        }
+
+                        onPress={() =>
+                          handleDelete(
+                            item.id
+                          )
+                        }
+                      >
+
+                        <MaterialIcons
+                          name="delete"
+                          size={18}
+                          color="#dc2626"
+                        />
+
+                      </TouchableOpacity>
+
+                    </View>
+
+                  </View>
+
+                  {/* Times */}
+
+                  <View
+                    style={
+                      styles.timeRow
+                    }
+                  >
+
+                    <View
+                      style={
+                        styles.timeBox
+                      }
+                    >
+
+                      <Text
+                        style={
+                          styles.timeLabel
+                        }
+                      >
+
+                        Check In
+
+                      </Text>
+
+                      <Text
+                        style={
+                          styles.timeValue
+                        }
+                      >
+
+                        {
+                          new Date(
+                            item.check_in
+                          ).toLocaleTimeString(
+                            [],
+                            {
+                              hour:
+                                '2-digit',
+                              minute:
+                                '2-digit',
+                            }
+                          )
+                        }
+
+                      </Text>
+
+                    </View>
+
+                    <View
+                      style={
+                        styles.timeBox
+                      }
+                    >
+
+                      <Text
+                        style={
+                          styles.timeLabel
+                        }
+                      >
+
+                        Check Out
+
+                      </Text>
+
+                      <Text
+                        style={
+                          styles.timeValue
+                        }
+                      >
+
+                        {
+                          new Date(
+                            item.check_out
+                          ).toLocaleTimeString(
+                            [],
+                            {
+                              hour:
+                                '2-digit',
+                              minute:
+                                '2-digit',
+                            }
+                          )
+                        }
+
+                      </Text>
+
+                    </View>
+
+                  </View>
+
+                  {/* Work */}
+
+                  <View
+                    style={
+                      styles.workBox
+                    }
+                  >
+
+                    <Text
+                      style={
+                        styles.workTitle
+                      }
+                    >
+
+                      Work Done
+
+                    </Text>
+
+                    <Text
+                      style={
+                        styles.workText
+                      }
+                    >
+
+                      {
+                        item.work_done
+                      }
+
+                    </Text>
+
+                  </View>
+
+                </View>
+              )
+            )
+          )
+        }
+
+      </ScrollView>
+
+      {/* FAB */}
+
+      <TouchableOpacity
+
+        style={styles.fab}
+
+        activeOpacity={0.85}
+
+        onPress={() => {
+
+          resetForm()
+
+          setModalVisible(true)
+
+        }}
+      >
+
+        <Ionicons
+          name="add"
+          size={30}
+          color="#fff"
+        />
+
+      </TouchableOpacity>
+
+      {/* Modal */}
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+      >
+
+        <View style={styles.modalBg}>
+
+          <View style={styles.modalCard}>
+
+            <Text
+              style={
+                styles.modalTitle
+              }
+            >
+
+              {
+                editMode
+                  ? 'Edit Attendance'
+                  : 'Add Attendance'
+              }
+
+            </Text>
+
+            <TextInput
+              placeholder="Employee Name"
+              placeholderTextColor={
+                Colors.gray
+              }
+              style={styles.input}
+              value={employeeName}
+              onChangeText={
+                setEmployeeName
+              }
+            />
+
+            <TouchableOpacity
+
+              style={
+                styles.input
+              }
+
+              onPress={() =>
+                setShowCheckInPicker(
+                  true
+                )
+              }
+            >
+
+              <Text>
+
+                Check In :
+                {' '}
+
+                {
+                  checkIn.toLocaleTimeString()
+                }
+
+              </Text>
+
+            </TouchableOpacity>
+
+            {
+              showCheckInPicker && (
+
+                <DateTimePicker
+                  value={checkIn}
+                  mode="time"
+                  onChange={(
+                    e,
+                    date
+                  ) => {
+
+                    setShowCheckInPicker(
+                      false
+                    )
+
+                    if (date) {
+
+                      setCheckIn(
+                        date
+                      )
+                    }
+                  }}
+                />
+              )
+            }
+
+            <TouchableOpacity
+
+              style={
+                styles.input
+              }
+
+              onPress={() =>
+                setShowCheckOutPicker(
+                  true
+                )
+              }
+            >
+
+              <Text>
+
+                Check Out :
+                {' '}
+
+                {
+                  checkOut.toLocaleTimeString()
+                }
+
+              </Text>
+
+            </TouchableOpacity>
+
+            {
+              showCheckOutPicker && (
+
+                <DateTimePicker
+                  value={checkOut}
+                  mode="time"
+                  onChange={(
+                    e,
+                    date
+                  ) => {
+
+                    setShowCheckOutPicker(
+                      false
+                    )
+
+                    if (date) {
+
+                      setCheckOut(
+                        date
+                      )
+                    }
+                  }}
+                />
+              )
+            }
+
+            <TextInput
+              placeholder="Work Done"
+              placeholderTextColor={
+                Colors.gray
+              }
+              multiline
+              style={
+                styles.textArea
+              }
+              value={workDone}
+              onChangeText={
+                setWorkDone
+              }
+            />
+
+            {/* Buttons */}
+
+            <View
+              style={
+                styles.buttonRow
+              }
+            >
+
+              <TouchableOpacity
+
+                style={
+                  styles.cancelButton
+                }
+
+                onPress={() =>
+                  setModalVisible(
+                    false
+                  )
+                }
+              >
+
+                <Text
+                  style={
+                    styles.cancelText
+                  }
+                >
+
+                  Cancel
+
+                </Text>
+
+              </TouchableOpacity>
+
+              <TouchableOpacity
+
+                style={
+                  styles.submitButton
+                }
+
+                onPress={
+                  handleSubmit
+                }
+              >
+
+                <Text
+                  style={
+                    styles.submitText
+                  }
+                >
+
+                  {
+                    editMode
+                      ? 'Update'
+                      : 'Save'
+                  }
+
+                </Text>
+
+              </TouchableOpacity>
+
+            </View>
+
+          </View>
+
+        </View>
+
+      </Modal>
+
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
 
   container: {
-    flexGrow: 1,
-    backgroundColor: Colors.background,
-    padding: 20,
-    paddingTop: 60,
-    paddingBottom: 40,
+
+    flex: 1,
+
+    backgroundColor:
+      Colors.background,
+
+    padding: 16,
+
+    paddingTop: 55,
+
   },
 
   header: {
+
     flexDirection: 'row',
-    justifyContent: 'space-between',
+
+    justifyContent:
+      'space-between',
+
     alignItems: 'center',
-    marginBottom: 30,
+
+    marginBottom: 18,
+
   },
 
   heading: {
-    fontSize: 34,
+
+    fontSize: 30,
+
     fontWeight: 'bold',
+
     color: Colors.black,
+
   },
 
   subHeading: {
+
     color: Colors.gray,
-    marginTop: 5,
-    fontSize: 15,
+
+    marginTop: 3,
+
+    fontSize: 13,
+
   },
 
   headerIcon: {
-    width: 60,
-    height: 60,
+
+    width: 55,
+
+    height: 55,
+
     borderRadius: 18,
-    backgroundColor: Colors.primary,
+
+    backgroundColor:
+      Colors.primary,
+
     justifyContent: 'center',
+
     alignItems: 'center',
+
+  },
+
+  searchContainer: {
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    backgroundColor:
+      Colors.white,
+
+    borderRadius: 16,
+
+    paddingHorizontal: 15,
+
+    marginBottom: 14,
+
+    height: 55,
+
+    elevation: 2,
+
+  },
+
+  searchInput: {
+
+    flex: 1,
+
+    marginLeft: 10,
+
+    color: Colors.black,
+
+  },
+
+  filterButton: {
+
+    height: 50,
+
+    backgroundColor:
+      Colors.primary,
+
+    borderRadius: 14,
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+    flexDirection: 'row',
+
+    marginBottom: 10,
+
+  },
+
+  filterText: {
+
+    color: '#fff',
+
+    marginLeft: 8,
+
+    fontWeight: '600',
+
+  },
+
+  clearButton: {
+
+    alignSelf: 'flex-end',
+
+    marginBottom: 12,
+
+  },
+
+  clearText: {
+
+    color: '#dc2626',
+
+    fontWeight: '600',
+
   },
 
   card: {
-    backgroundColor: Colors.white,
-    borderRadius: 25,
-    padding: 22,
+
+    backgroundColor:
+      Colors.white,
+
+    borderRadius: 22,
+
+    padding: 16,
+
+    marginBottom: 14,
+
+    elevation: 3,
+
   },
 
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
+  cardTop: {
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    marginBottom: 12,
+
+  },
+
+  avatar: {
+
+    width: 48,
+
+    height: 48,
+
+    borderRadius: 16,
+
+    backgroundColor:
+      Colors.primary,
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+    marginRight: 12,
+
+  },
+
+  avatarText: {
+
+    color: '#fff',
+
+    fontSize: 20,
+
+    fontWeight: 'bold',
+
+  },
+
+  employeeName: {
+
+    fontSize: 16,
+
+    fontWeight: 'bold',
+
     color: Colors.black,
-    marginBottom: 10,
-    marginTop: 5,
+
   },
 
-  inputContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: Colors.background,
-  borderRadius: 15,
-  paddingHorizontal: 15,
-  height: 60,
-  marginBottom: 18,
-},
+  dateText: {
+
+    color: Colors.gray,
+
+    marginTop: 3,
+
+    fontSize: 12,
+
+  },
+
+  actionRow: {
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+
+    gap: 8,
+
+  },
+
+  editButton: {
+
+    width: 34,
+
+    height: 34,
+
+    borderRadius: 12,
+
+    backgroundColor:
+      '#dbeafe',
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+  },
+
+  deleteButton: {
+
+    width: 34,
+
+    height: 34,
+
+    borderRadius: 12,
+
+    backgroundColor:
+      '#fee2e2',
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+  },
+
+  timeRow: {
+
+    flexDirection: 'row',
+
+    justifyContent:
+      'space-between',
+
+    marginBottom: 12,
+
+  },
+
+  timeBox: {
+
+    flex: 1,
+
+    backgroundColor:
+      '#f8fafc',
+
+    padding: 12,
+
+    borderRadius: 14,
+
+    marginHorizontal: 3,
+
+  },
+
+  timeLabel: {
+
+    fontSize: 11,
+
+    color: Colors.gray,
+
+  },
+
+  timeValue: {
+
+    marginTop: 5,
+
+    fontWeight: 'bold',
+
+    color: Colors.black,
+
+  },
+
+  workBox: {
+
+    backgroundColor:
+      '#f8fafc',
+
+    padding: 14,
+
+    borderRadius: 14,
+
+  },
+
+  workTitle: {
+
+    fontWeight: 'bold',
+
+    color: Colors.black,
+
+    marginBottom: 6,
+
+    fontSize: 13,
+
+  },
+
+  workText: {
+
+    color: Colors.gray,
+
+    lineHeight: 20,
+
+    fontSize: 13,
+
+  },
+
+  fab: {
+
+    position: 'absolute',
+
+    right: 22,
+
+    bottom: 25,
+
+    width: 62,
+
+    height: 62,
+
+    borderRadius: 22,
+
+    backgroundColor:
+      Colors.primary,
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+    elevation: 8,
+
+  },
+
+  modalBg: {
+
+    flex: 1,
+
+    backgroundColor:
+      'rgba(0,0,0,0.35)',
+
+    justifyContent: 'flex-end',
+
+  },
+
+  modalCard: {
+
+    backgroundColor:
+      Colors.white,
+
+    borderTopLeftRadius: 28,
+
+    borderTopRightRadius: 28,
+
+    padding: 22,
+
+  },
+
+  modalTitle: {
+
+    fontSize: 22,
+
+    fontWeight: 'bold',
+
+    marginBottom: 18,
+
+    color: Colors.black,
+
+  },
 
   input: {
-    flex: 1,
-    padding: 16,
-    fontSize: 16,
-    color: Colors.black,
-    marginLeft: 10,
+
+    backgroundColor:
+      '#f8fafc',
+
+    borderRadius: 14,
+
+    padding: 15,
+
+    marginBottom: 14,
+
+    borderWidth: 1,
+
+    borderColor: '#e2e8f0',
+
   },
 
-textArea: {
-  backgroundColor: Colors.white,
+  textArea: {
 
-  borderRadius: 16,
+    backgroundColor:
+      '#f8fafc',
 
-  padding: 15,
+    borderRadius: 14,
 
-  minHeight: 140,
+    padding: 15,
 
-  fontSize: 16,
+    height: 110,
 
-  color: Colors.black,
+    textAlignVertical: 'top',
 
-  textAlignVertical: 'top',
+    borderWidth: 1,
 
-},
-  button: {
-    backgroundColor: Colors.primary,
-    padding: 18,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: '#e2e8f0',
+
+    marginBottom: 18,
+
+  },
+
+  buttonRow: {
+
     flexDirection: 'row',
-    gap: 10,
+
+    justifyContent:
+      'space-between',
+
+  },
+
+  cancelButton: {
+
+    flex: 1,
+
+    height: 52,
+
+    borderRadius: 16,
+
+    backgroundColor:
+      '#e2e8f0',
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+    marginRight: 10,
+
+  },
+
+  submitButton: {
+
+    flex: 1,
+
+    height: 52,
+
+    borderRadius: 16,
+
+    backgroundColor:
+      Colors.primary,
+
+    justifyContent: 'center',
+
+    alignItems: 'center',
+
+  },
+
+  cancelText: {
+
+    fontWeight: 'bold',
+
+    color: Colors.black,
+
+  },
+
+  submitText: {
+
+    fontWeight: 'bold',
+
+    color: '#fff',
+
+  },
+
+  emptyContainer: {
+
+    marginTop: 120,
+
+    alignItems: 'center',
+
+  },
+
+  emptyTitle: {
+
+    marginTop: 16,
+
+    fontSize: 22,
+
+    fontWeight: 'bold',
+
+    color: Colors.gray,
+
   },
 
   successBox: {
+
     position: 'absolute',
+
     top: 20,
+
     left: 20,
+
     right: 20,
+
+    backgroundColor:
+      '#16a34a',
+
+    padding: 16,
+
+    borderRadius: 16,
+
     flexDirection: 'row',
+
     alignItems: 'center',
-    padding: 15,
-    borderRadius: 18,
-    backgroundColor: Colors.primary,
-    zIndex: 1,
+
+    zIndex: 999,
+
   },
 
   successText: {
-    color: Colors.white,
-    fontSize: 15,
-    marginLeft: 10,
-  },
 
-  buttonText: {
-    color: Colors.white,
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#fff',
+
+    marginLeft: 10,
+
+    fontWeight: '600',
+
   },
-  timeText: {
-  marginLeft: 12,
-  fontSize: 16,
-  color: Colors.black,
-  fontWeight: '600',
-},
-charCount: {
-  textAlign: 'right',
-  color: Colors.gray,
-  marginTop: -15,
-  marginBottom: 20,
-  fontSize: 13,
-},
 
 })

@@ -5,13 +5,17 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Image,
 } from 'react-native'
 
-import { router } from 'expo-router'
+import {
+  router,
+} from 'expo-router'
 
 import {
   Entypo,
   Ionicons,
+  MaterialIcons,
 } from '@expo/vector-icons'
 
 import Colors from '../../constants/colors'
@@ -21,6 +25,7 @@ export default function HomeScreen() {
   return (
 
     <ScrollView
+
       contentContainerStyle={
         styles.container
       }
@@ -30,9 +35,33 @@ export default function HomeScreen() {
       }
     >
 
-      {/* Search */}
+      {/* ===================================== */}
+      {/* HEADER */}
+      {/* ===================================== */}
 
-      <View style={styles.searchContainer}>
+      <View style={styles.header}>
+
+        <View>
+          
+          <Text style={styles.userName}>
+
+            Vizhuthugal 
+
+          </Text>
+
+        </View>
+
+      </View>
+
+      {/* ===================================== */}
+      {/* SEARCH */}
+      {/* ===================================== */}
+
+      <View
+        style={
+          styles.searchContainer
+        }
+      >
 
         <Ionicons
           name="search"
@@ -41,7 +70,7 @@ export default function HomeScreen() {
         />
 
         <TextInput
-          placeholder="Search..."
+          placeholder="Search modules..."
           placeholderTextColor={
             Colors.gray
           }
@@ -50,10 +79,89 @@ export default function HomeScreen() {
 
       </View>
 
-      {/* Attendance */}
+      {/* ===================================== */}
+      {/* QUICK STATS */}
+      {/* ===================================== */}
+
+      <View style={styles.statsRow}>
+
+        {/* Employees */}
+
+        <View
+          style={[
+            styles.statCard,
+            {
+              backgroundColor:
+                '#2563eb',
+            },
+          ]}
+        >
+
+          <Ionicons
+            name="people"
+            size={28}
+            color="#fff"
+          />
+
+          <Text style={styles.statNumber}>
+            120
+          </Text>
+
+          <Text style={styles.statLabel}>
+            Employees
+          </Text>
+
+        </View>
+
+        {/* Attendance */}
+
+        <View
+          style={[
+            styles.statCard,
+            {
+              backgroundColor:
+                '#16a34a',
+            },
+          ]}
+        >
+
+          <Entypo
+            name="calendar"
+            size={28}
+            color="#fff"
+          />
+
+          <Text style={styles.statNumber}>
+            98
+          </Text>
+
+          <Text style={styles.statLabel}>
+            Present
+          </Text>
+
+        </View>
+
+      </View>
+
+      {/* ===================================== */}
+      {/* MODULE TITLE */}
+      {/* ===================================== */}
+
+      <Text style={styles.sectionTitle}>
+
+        Quick Modules
+
+      </Text>
+
+      {/* ===================================== */}
+      {/* ATTENDANCE */}
+      {/* ===================================== */}
 
       <TouchableOpacity
+
         style={styles.moduleCard}
+
+        activeOpacity={0.85}
 
         onPress={() =>
           router.push('/attendance')
@@ -63,13 +171,19 @@ export default function HomeScreen() {
         <View style={styles.moduleLeft}>
 
           <View
-            style={styles.moduleIconBox}
+            style={[
+              styles.moduleIconBox,
+              {
+                backgroundColor:
+                  '#2563eb',
+              },
+            ]}
           >
 
             <Entypo
               name="calendar"
               size={24}
-              color={Colors.white}
+              color="#fff"
             />
 
           </View>
@@ -77,9 +191,13 @@ export default function HomeScreen() {
           <View>
 
             <Text
-              style={styles.moduleTitle}
+              style={
+                styles.moduleTitle
+              }
             >
+
               Attendance
+
             </Text>
 
             <Text
@@ -87,7 +205,9 @@ export default function HomeScreen() {
                 styles.moduleSubTitle
               }
             >
+
               Daily attendance details
+
             </Text>
 
           </View>
@@ -102,15 +222,22 @@ export default function HomeScreen() {
 
       </TouchableOpacity>
 
-{/* Employee Profile */}
+      {/* ===================================== */}
+      {/* EMPLOYEE */}
+      {/* ===================================== */}
 
       <TouchableOpacity
-  style={styles.moduleCard}
-  activeOpacity={0.8}
-  onPress={() =>
-    router.push('/employeeprofile')
-  }
->
+
+        style={styles.moduleCard}
+
+        activeOpacity={0.85}
+
+        onPress={() =>
+          router.push(
+            '/employeeprofile'
+          )
+        }
+      >
 
         <View style={styles.moduleLeft}>
 
@@ -127,7 +254,7 @@ export default function HomeScreen() {
             <Ionicons
               name="person"
               size={24}
-              color={Colors.white}
+              color="#fff"
             />
 
           </View>
@@ -135,9 +262,13 @@ export default function HomeScreen() {
           <View>
 
             <Text
-              style={styles.moduleTitle}
+              style={
+                styles.moduleTitle
+              }
             >
+
               Employee Profile
+
             </Text>
 
             <Text
@@ -145,7 +276,9 @@ export default function HomeScreen() {
                 styles.moduleSubTitle
               }
             >
-              Employee profile details
+
+              Employee details & records
+
             </Text>
 
           </View>
@@ -160,10 +293,16 @@ export default function HomeScreen() {
 
       </TouchableOpacity>
 
-      {/* Daily Report */}
+      {/* ===================================== */}
+      {/* DAILY REPORT */}
+      {/* ===================================== */}
 
       <TouchableOpacity
+
         style={styles.moduleCard}
+
+        activeOpacity={0.85}
+
       >
 
         <View style={styles.moduleLeft}>
@@ -173,7 +312,7 @@ export default function HomeScreen() {
               styles.moduleIconBox,
               {
                 backgroundColor:
-                  Colors.success,
+                  '#16a34a',
               },
             ]}
           >
@@ -181,7 +320,7 @@ export default function HomeScreen() {
             <Entypo
               name="text-document"
               size={24}
-              color={Colors.white}
+              color="#fff"
             />
 
           </View>
@@ -189,9 +328,13 @@ export default function HomeScreen() {
           <View>
 
             <Text
-              style={styles.moduleTitle}
+              style={
+                styles.moduleTitle
+              }
             >
+
               Daily Report
+
             </Text>
 
             <Text
@@ -199,7 +342,9 @@ export default function HomeScreen() {
                 styles.moduleSubTitle
               }
             >
+
               Employee work updates
+
             </Text>
 
           </View>
@@ -214,49 +359,148 @@ export default function HomeScreen() {
 
       </TouchableOpacity>
 
-      
-      {/* Stats Card */}
+      {/* ===================================== */}
+      {/* TASK MANAGEMENT */}
+      {/* ===================================== */}
 
-      <View style={styles.statsCard}>
+      <TouchableOpacity
 
-        <Text style={styles.statsTitle}>
-          Today's Summary
-        </Text>
+        style={styles.moduleCard}
 
-        <View style={styles.statsRow}>
+        activeOpacity={0.85}
 
-          <View>
+      >
 
-            <Text style={styles.statsNumber}>
-              12
-            </Text>
+        <View style={styles.moduleLeft}>
 
-            <Text style={styles.statsLabel}>
-              Tasks
-            </Text>
+          <View
+            style={[
+              styles.moduleIconBox,
+              {
+                backgroundColor:
+                  '#f97316',
+              },
+            ]}
+          >
 
-          </View>
-
-          <View>
-
-            <Text style={styles.statsNumber}>
-              24
-            </Text>
-
-            <Text style={styles.statsLabel}>
-              Present
-            </Text>
+            <MaterialIcons
+              name="task"
+              size={24}
+              color="#fff"
+            />
 
           </View>
 
           <View>
 
-            <Text style={styles.statsNumber}>
-              8
+            <Text
+              style={
+                styles.moduleTitle
+              }
+            >
+
+              Task Management
+
             </Text>
 
-            <Text style={styles.statsLabel}>
-              Reports
+            <Text
+              style={
+                styles.moduleSubTitle
+              }
+            >
+
+              Manage employee tasks
+
+            </Text>
+
+          </View>
+
+        </View>
+
+        <Ionicons
+          name="chevron-forward"
+          size={22}
+          color={Colors.gray}
+        />
+
+      </TouchableOpacity>
+
+      {/* ===================================== */}
+      {/* RECENT ACTIVITY */}
+      {/* ===================================== */}
+
+      <Text style={styles.sectionTitle}>
+
+        Recent Activity
+
+      </Text>
+
+      <View style={styles.activityCard}>
+
+        <View style={styles.activityRow}>
+
+          <View
+            style={styles.activityDot}
+          />
+
+          <View>
+
+            <Text
+              style={
+                styles.activityTitle
+              }
+            >
+
+              Attendance marked successfully
+
+            </Text>
+
+            <Text
+              style={
+                styles.activityTime
+              }
+            >
+
+              2 mins ago
+
+            </Text>
+
+          </View>
+
+        </View>
+
+        <View style={styles.activityRow}>
+
+          <View
+            style={[
+              styles.activityDot,
+              {
+                backgroundColor:
+                  '#16a34a',
+              },
+            ]}
+          />
+
+          <View>
+
+            <Text
+              style={
+                styles.activityTitle
+              }
+            >
+
+              New employee added
+
+            </Text>
+
+            <Text
+              style={
+                styles.activityTime
+              }
+            >
+
+              10 mins ago
+
             </Text>
 
           </View>
@@ -269,157 +513,334 @@ export default function HomeScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const styles =
+  StyleSheet.create({
 
-  container: {
-    flexGrow: 1,
+    container: {
 
-    backgroundColor:
-      Colors.background,
+      flexGrow: 1,
 
-    paddingHorizontal: 20,
+      backgroundColor:
+        '#f8fafc',
 
-    paddingTop: 20,
+      paddingHorizontal: 20,
 
-    paddingBottom: 120,
-  },
+      paddingTop: 20,
 
-  /* Search */
+      paddingBottom: 120,
 
-  searchContainer: {
-    backgroundColor:
-      Colors.white,
+    },
 
-    borderRadius: 18,
+    /* HEADER */
 
-    paddingHorizontal: 15,
+    header: {
 
-    flexDirection: 'row',
+      flexDirection: 'row',
 
-    alignItems: 'center',
+      justifyContent:
+        'space-between',
 
-    marginBottom: 25,
+      alignItems: 'center',
 
-    elevation: 3,
-  },
+      marginBottom: 25,
 
-  searchInput: {
-    flex: 1,
+    },
 
-    padding: 15,
+    greeting: {
 
-    fontSize: 16,
+      color: Colors.gray,
 
-    marginLeft: 8,
+      fontSize: 15,
 
-    color: Colors.black,
-  },
+    },
 
-  /* Module Cards */
+    userName: {
 
-  moduleCard: {
-    backgroundColor:
-      Colors.white,
+      fontSize: 28,
 
-    padding: 18,
+      fontWeight: 'bold',
 
-    borderRadius: 22,
+      color: Colors.black,
 
-    marginBottom: 18,
+      marginTop: 4,
 
-    flexDirection: 'row',
+    },
 
-    justifyContent:
-      'space-between',
+    profile: {
 
-    alignItems: 'center',
+      width: 55,
 
-    elevation: 4,
-  },
+      height: 55,
 
-  moduleLeft: {
-    flexDirection: 'row',
+      borderRadius: 18,
 
-    alignItems: 'center',
-  },
+    },
 
-  moduleIconBox: {
-    width: 58,
+    /* SEARCH */
 
-    height: 58,
+    searchContainer: {
 
-    borderRadius: 18,
+      backgroundColor:
+        '#fff',
 
-    backgroundColor:
-      Colors.primary,
+      borderRadius: 20,
 
-    justifyContent: 'center',
+      paddingHorizontal: 16,
 
-    alignItems: 'center',
+      flexDirection: 'row',
 
-    marginRight: 15,
-  },
+      alignItems: 'center',
 
-  moduleTitle: {
-    fontSize: 18,
+      marginBottom: 25,
 
-    fontWeight: 'bold',
+      elevation: 3,
 
-    color: Colors.black,
-  },
+      shadowColor: '#000',
 
-  moduleSubTitle: {
-    color: Colors.gray,
+      shadowOffset: {
 
-    marginTop: 4,
+        width: 0,
 
-    fontSize: 14,
-  },
+        height: 4,
 
-  /* Stats */
+      },
 
-  statsCard: {
-    backgroundColor:
-      Colors.primary,
+      shadowOpacity: 0.05,
 
-    borderRadius: 24,
+      shadowRadius: 6,
 
-    padding: 24,
+    },
 
-    marginTop: 10,
-  },
+    searchInput: {
 
-  statsTitle: {
-    color: '#fff',
+      flex: 1,
 
-    fontSize: 20,
+      padding: 15,
 
-    fontWeight: 'bold',
+      fontSize: 16,
 
-    marginBottom: 20,
-  },
+      marginLeft: 8,
 
-  statsRow: {
-    flexDirection: 'row',
+      color: Colors.black,
 
-    justifyContent:
-      'space-between',
-  },
+    },
 
-  statsNumber: {
-    color: '#fff',
+    /* STATS */
 
-    fontSize: 28,
+    statsRow: {
 
-    fontWeight: 'bold',
-  },
+      flexDirection: 'row',
 
-  statsLabel: {
-    color: '#e2e8f0',
+      justifyContent:
+        'space-between',
 
-    marginTop: 5,
+      marginBottom: 30,
 
-    fontSize: 14,
-  },
+    },
 
-})
+    statCard: {
+
+      width: '48%',
+
+      borderRadius: 24,
+
+      padding: 22,
+
+      elevation: 5,
+
+    },
+
+    statNumber: {
+
+      color: '#fff',
+
+      fontSize: 32,
+
+      fontWeight: 'bold',
+
+      marginTop: 16,
+
+    },
+
+    statLabel: {
+
+      color: '#e0e7ff',
+
+      marginTop: 6,
+
+      fontSize: 14,
+
+    },
+
+    /* SECTION */
+
+    sectionTitle: {
+
+      fontSize: 20,
+
+      fontWeight: 'bold',
+
+      color: Colors.black,
+
+      marginBottom: 18,
+
+    },
+
+    /* MODULE */
+
+    moduleCard: {
+
+      backgroundColor:
+        '#fff',
+
+      padding: 18,
+
+      borderRadius: 24,
+
+      marginBottom: 18,
+
+      flexDirection: 'row',
+
+      justifyContent:
+        'space-between',
+
+      alignItems: 'center',
+
+      elevation: 4,
+
+      shadowColor: '#000',
+
+      shadowOffset: {
+
+        width: 0,
+
+        height: 4,
+
+      },
+
+      shadowOpacity: 0.05,
+
+      shadowRadius: 8,
+
+    },
+
+    moduleLeft: {
+
+      flexDirection: 'row',
+
+      alignItems: 'center',
+
+    },
+
+    moduleIconBox: {
+
+      width: 60,
+
+      height: 60,
+
+      borderRadius: 20,
+
+      justifyContent:
+        'center',
+
+      alignItems: 'center',
+
+      marginRight: 16,
+
+    },
+
+    moduleTitle: {
+
+      fontSize: 18,
+
+      fontWeight: 'bold',
+
+      color: Colors.black,
+
+    },
+
+    moduleSubTitle: {
+
+      color: Colors.gray,
+
+      marginTop: 4,
+
+      fontSize: 14,
+
+    },
+
+    /* ACTIVITY */
+
+    activityCard: {
+
+      backgroundColor:
+        '#fff',
+
+      borderRadius: 24,
+
+      padding: 22,
+
+      elevation: 4,
+
+      shadowColor: '#000',
+
+      shadowOffset: {
+
+        width: 0,
+
+        height: 4,
+
+      },
+
+      shadowOpacity: 0.05,
+
+      shadowRadius: 8,
+
+    },
+
+    activityRow: {
+
+      flexDirection: 'row',
+
+      alignItems: 'center',
+
+      marginBottom: 18,
+
+    },
+
+    activityDot: {
+
+      width: 14,
+
+      height: 14,
+
+      borderRadius: 20,
+
+      backgroundColor:
+        '#2563eb',
+
+      marginRight: 14,
+
+    },
+
+    activityTitle: {
+
+      fontSize: 15,
+
+      fontWeight: '600',
+
+      color: Colors.black,
+
+    },
+
+    activityTime: {
+
+      color: Colors.gray,
+
+      marginTop: 3,
+
+      fontSize: 13,
+
+    },
+
+  })

@@ -2,7 +2,7 @@ import {
   Tabs,
   router,
 } from 'expo-router'
-import { useState } from 'react'
+
 import {
   Ionicons,
 } from '@expo/vector-icons'
@@ -12,108 +12,191 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from 'react-native'
 
 import Colors from '../../constants/colors'
 
 export default function TabsLayout() {
+
   return (
+
     <View style={styles.container}>
-      
-      {/* Top Navbar */}
+
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={
+          Colors.primary
+        }
+      />
+
+      {/* ===================================== */}
+      {/* TOP NAVBAR */}
+      {/* ===================================== */}
 
       <View style={styles.navbar}>
-        
-        {/* Menu */}
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() =>
-            router.push('/menu')
-          }
-        >
-          <Ionicons
-            name="menu"
-            size={30}
-            color="#fff"
-          />
-        </TouchableOpacity>
+        {/* Left Section */}
 
-        {/* Title */}
+        <View style={styles.leftSection}>
 
-        <Text style={styles.title}>
-          Vizhuthugal
-        </Text>
+          {/* Menu */}
 
-        {/* Notification */}
+          <TouchableOpacity
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() =>
-            router.push(
-              '/notifications'
-            )
-          }
-        >
-          <Ionicons
-            name="notifications-outline"
-            size={28}
-            color="#fff"
-          />
-        </TouchableOpacity>
+            activeOpacity={0.8}
+
+            style={styles.iconButton}
+
+            onPress={() =>
+              router.push('/menu')
+            }
+          >
+
+            <Ionicons
+              name="menu"
+              size={28}
+              color="#fff"
+            />
+
+          </TouchableOpacity>
+
+          {/* App Name */}
+
+          <View>
+
+           
+
+            <Text style={styles.title}>
+
+              Vizhuthugal
+
+            </Text>
+
+             <Text style={styles.smallText}>
+
+              Welcome Back admin👋
+
+            </Text>
+          </View>
+
+        </View>
+
+        {/* Right Section */}
+
+        <View style={styles.rightSection}>
+
+          {/* Notification */}
+
+          <TouchableOpacity
+
+            activeOpacity={0.8}
+
+            style={styles.notificationButton}
+
+            onPress={() =>
+              router.push(
+                '/notifications'
+              )
+            }
+          >
+
+            <Ionicons
+              name="notifications-outline"
+              size={24}
+              color="#fff"
+            />
+
+            {/* Notification Dot */}
+
+            <View style={styles.dot} />
+
+          </TouchableOpacity>
+
+        </View>
 
       </View>
 
-      {/* Bottom Tabs */}
+      {/* ===================================== */}
+      {/* BOTTOM TABS */}
+      {/* ===================================== */}
 
       <Tabs
+
         screenOptions={{
+
           headerShown: false,
 
           tabBarActiveTintColor:
             Colors.primary,
 
           tabBarInactiveTintColor:
-            Colors.gray,
+            '#94a3b8',
 
           tabBarHideOnKeyboard: true,
 
           tabBarStyle: {
+
             position: 'absolute',
 
-            left: 15,
-            right: 15,
-            bottom: 12,
+            left: 18,
+            right: 18,
+            bottom: 14,
 
-            height: 72,
+            height: 74,
 
-            borderRadius: 24,
+            borderRadius: 28,
 
             backgroundColor:
               '#fff',
 
             borderTopWidth: 0,
 
-            elevation: 10,
+            elevation: 12,
+
+            shadowColor: '#000',
+
+            shadowOffset: {
+
+              width: 0,
+
+              height: 5,
+
+            },
+
+            shadowOpacity: 0.08,
+
+            shadowRadius: 10,
 
             paddingTop: 8,
+
             paddingBottom: 8,
+
           },
 
           tabBarLabelStyle: {
+
             fontSize: 12,
 
-            fontWeight: '600',
+            fontWeight: '700',
 
-            marginBottom: 4,
+            marginBottom: 5,
+
           },
+
         }}
       >
-        {/* Activity */}
+
+        {/* ===================================== */}
+        {/* ACTIVITY */}
+        {/* ===================================== */}
 
         <Tabs.Screen
+
           name="explore"
+
           options={{
+
             title: 'Activity',
 
             tabBarIcon: ({
@@ -121,24 +204,45 @@ export default function TabsLayout() {
               size,
               focused,
             }) => (
-              <Ionicons
-                name={
+
+              <View
+                style={
                   focused
-                    ? 'time'
-                    : 'time-outline'
+                    ? styles.activeIcon
+                    : undefined
                 }
-                size={size}
-                color={color}
-              />
+              >
+
+                <Ionicons
+
+                  name={
+                    focused
+                      ? 'time'
+                      : 'time-outline'
+                  }
+
+                  size={size}
+
+                  color={color}
+
+                />
+
+              </View>
             ),
+
           }}
         />
 
-        {/* Home */}
+        {/* ===================================== */}
+        {/* HOME */}
+        {/* ===================================== */}
 
         <Tabs.Screen
+
           name="home"
+
           options={{
+
             title: 'Home',
 
             tabBarIcon: ({
@@ -146,24 +250,45 @@ export default function TabsLayout() {
               size,
               focused,
             }) => (
-              <Ionicons
-                name={
+
+              <View
+                style={
                   focused
-                    ? 'home'
-                    : 'home-outline'
+                    ? styles.activeIcon
+                    : undefined
                 }
-                size={size}
-                color={color}
-              />
+              >
+
+                <Ionicons
+
+                  name={
+                    focused
+                      ? 'home'
+                      : 'home-outline'
+                  }
+
+                  size={size}
+
+                  color={color}
+
+                />
+
+              </View>
             ),
+
           }}
         />
 
-        {/* Profile */}
+        {/* ===================================== */}
+        {/* PROFILE */}
+        {/* ===================================== */}
 
         <Tabs.Screen
+
           name="profile"
+
           options={{
+
             title: 'Profile',
 
             tabBarIcon: ({
@@ -171,63 +296,221 @@ export default function TabsLayout() {
               size,
               focused,
             }) => (
-              <Ionicons
-                name={
+
+              <View
+                style={
                   focused
-                    ? 'person'
-                    : 'person-outline'
+                    ? styles.activeIcon
+                    : undefined
                 }
-                size={size}
-                color={color}
-              />
+              >
+
+                <Ionicons
+
+                  name={
+                    focused
+                      ? 'person'
+                      : 'person-outline'
+                  }
+
+                  size={size}
+
+                  color={color}
+
+                />
+
+              </View>
             ),
+
           }}
         />
+
       </Tabs>
+
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+const styles =
+  StyleSheet.create({
 
-    backgroundColor:
-      Colors.background,
-  },
+    container: {
 
-  /* Navbar */
+      flex: 1,
 
-  navbar: {
-    height: 95,
+      backgroundColor:
+        Colors.background,
 
-    backgroundColor:
-      Colors.primary,
+    },
 
-    flexDirection: 'row',
+    /* ===================================== */
+    /* NAVBAR */
+    /* ===================================== */
 
-    alignItems: 'center',
+    navbar: {
 
-    justifyContent:
-      'space-between',
+      height: 105,
 
-    paddingHorizontal: 18,
+      backgroundColor:
+        Colors.primary,
 
-    paddingTop: 38,
+      flexDirection: 'row',
 
-    borderBottomLeftRadius: 22,
-    borderBottomRightRadius: 22,
+      alignItems: 'center',
 
-    elevation: 8,
+      justifyContent:
+        'space-between',
 
-    zIndex: 999,
-  },
+      paddingHorizontal: 18,
 
-  title: {
-    color: '#fff',
+      paddingTop: 40,
 
-    fontSize: 22,
+      borderBottomLeftRadius: 28,
 
-    fontWeight: 'bold',
-  },
-})
+      borderBottomRightRadius: 28,
+
+      elevation: 10,
+
+      shadowColor: '#000',
+
+      shadowOffset: {
+
+        width: 0,
+
+        height: 5,
+
+      },
+
+      shadowOpacity: 0.15,
+
+      shadowRadius: 8,
+
+      zIndex: 999,
+
+    },
+
+    leftSection: {
+
+      flexDirection: 'row',
+
+      alignItems: 'center',
+
+      gap: 14,
+
+    },
+
+    rightSection: {
+
+      flexDirection: 'row',
+
+      alignItems: 'center',
+
+    },
+
+    iconButton: {
+
+      width: 46,
+
+      height: 46,
+
+      borderRadius: 16,
+
+      backgroundColor:
+        'rgba(255,255,255,0.15)',
+
+      alignItems: 'center',
+
+      justifyContent:
+        'center',
+
+    },
+
+    notificationButton: {
+
+      width: 46,
+
+      height: 46,
+
+      borderRadius: 16,
+
+      backgroundColor:
+        'rgba(255,255,255,0.15)',
+
+      alignItems: 'center',
+
+      justifyContent:
+        'center',
+
+    },
+
+    dot: {
+
+      width: 10,
+
+      height: 10,
+
+      borderRadius: 10,
+
+      backgroundColor: '#ef4444',
+
+      position: 'absolute',
+
+      top: 10,
+
+      right: 10,
+
+      borderWidth: 2,
+
+      borderColor:
+        Colors.primary,
+
+    },
+
+    smallText: {
+
+      color:
+        'rgba(255,255,255,0.8)',
+
+      fontSize: 12,
+
+      marginBottom: 2,
+
+    },
+
+    title: {
+
+      color: '#fff',
+
+      fontSize: 24,
+
+      fontWeight: 'bold',
+
+      letterSpacing: 0.5,
+
+    },
+
+    /* ===================================== */
+    /* ACTIVE TAB ICON */
+    /* ===================================== */
+
+    activeIcon: {
+
+      width: 42,
+
+      height: 42,
+
+      borderRadius: 14,
+
+      backgroundColor:
+        'rgba(37,99,235,0.12)',
+
+      alignItems: 'center',
+
+      justifyContent:
+        'center',
+
+      marginBottom: 2,
+
+    },
+
+  })

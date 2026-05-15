@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://192.168.0.139:5000/api',
+  baseURL: 'https://vizhuthugal-backend.onrender.com/api',
 });
 
 export default API;

@@ -2,7 +2,7 @@ import {
   Tabs,
   router,
 } from 'expo-router'
-
+import { useState } from 'react'
 import {
   Ionicons,
 } from '@expo/vector-icons'
@@ -17,25 +17,26 @@ import {
 import Colors from '../../constants/colors'
 
 export default function TabsLayout() {
-
   return (
-
     <View style={styles.container}>
-
-      {/* Fixed Top Navbar */}
+      
+      {/* Top Navbar */}
 
       <View style={styles.navbar}>
-
+        
         {/* Menu */}
 
-        <TouchableOpacity>
-
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            router.push('/menu')
+          }
+        >
           <Ionicons
             name="menu"
             size={30}
             color="#fff"
           />
-
         </TouchableOpacity>
 
         {/* Title */}
@@ -47,157 +48,153 @@ export default function TabsLayout() {
         {/* Notification */}
 
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() =>
-            router.push('/notifications')
+            router.push(
+              '/notifications'
+            )
           }
         >
-
           <Ionicons
             name="notifications-outline"
             size={28}
             color="#fff"
           />
-
         </TouchableOpacity>
 
       </View>
 
-     {/* Bottom Tabs */}
+      {/* Bottom Tabs */}
 
-<View style={styles.tabsContainer}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
 
-  <Tabs
-    screenOptions={{
+          tabBarActiveTintColor:
+            Colors.primary,
 
-      headerShown: false,
+          tabBarInactiveTintColor:
+            Colors.gray,
 
-      tabBarActiveTintColor:
-        Colors.primary,
+          tabBarHideOnKeyboard: true,
 
-      tabBarInactiveTintColor:
-        Colors.gray,
+          tabBarStyle: {
+            position: 'absolute',
 
-      tabBarHideOnKeyboard: true,
+            left: 15,
+            right: 15,
+            bottom: 12,
 
-      tabBarStyle: {
-        position: 'absolute',
+            height: 72,
 
-        left: 15,
-        right: 15,
-        bottom: 12,
+            borderRadius: 24,
 
-        height: 68,
+            backgroundColor:
+              '#fff',
 
-        borderRadius: 22,
+            borderTopWidth: 0,
 
-        backgroundColor:
-          '#fff',
+            elevation: 10,
 
-        borderTopWidth: 0,
+            paddingTop: 8,
+            paddingBottom: 8,
+          },
 
-        elevation: 10,
+          tabBarLabelStyle: {
+            fontSize: 12,
 
-        paddingTop: 8,
+            fontWeight: '600',
 
-        paddingBottom: 8,
-      },
+            marginBottom: 4,
+          },
+        }}
+      >
+        {/* Activity */}
 
-      tabBarLabelStyle: {
-        fontSize: 12,
+        <Tabs.Screen
+          name="explore"
+          options={{
+            title: 'Activity',
 
-        fontWeight: '600',
+            tabBarIcon: ({
+              color,
+              size,
+              focused,
+            }) => (
+              <Ionicons
+                name={
+                  focused
+                    ? 'time'
+                    : 'time-outline'
+                }
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
 
-        marginBottom: 3,
-      },
-    }}
-  >
+        {/* Home */}
 
-    {/* Activity */}
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: 'Home',
 
-    <Tabs.Screen
-      name="explore"
+            tabBarIcon: ({
+              color,
+              size,
+              focused,
+            }) => (
+              <Ionicons
+                name={
+                  focused
+                    ? 'home'
+                    : 'home-outline'
+                }
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
 
-      options={{
-        title: 'Activity',
+        {/* Profile */}
 
-        tabBarIcon: ({
-          color,
-          size,
-        }) => (
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
 
-          <Ionicons
-            name="time-outline"
-            size={size}
-            color={color}
-          />
-
-        ),
-      }}
-    />
-
-    {/* Home */}
-
-    <Tabs.Screen
-      name="home"
-
-      options={{
-        title: 'Home',
-
-        tabBarIcon: ({
-          color,
-          size,
-        }) => (
-
-          <Ionicons
-            name="home-outline"
-            size={size}
-            color={color}
-          />
-
-        ),
-      }}
-    />
-
-    {/* Profile */}
-
-    <Tabs.Screen
-      name="index"
-
-      options={{
-        title: 'Profile',
-
-        tabBarIcon: ({
-          color,
-          size,
-        }) => (
-
-          <Ionicons
-            name="person-outline"
-            size={size}
-            color={color}
-          />
-
-        ),
-      }}
-    />
-
-  </Tabs>
-
-</View>
-
+            tabBarIcon: ({
+              color,
+              size,
+              focused,
+            }) => (
+              <Ionicons
+                name={
+                  focused
+                    ? 'person'
+                    : 'person-outline'
+                }
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tabs>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-  },
 
-  tabsContainer: {
-  flex: 1,
-},
+    backgroundColor:
+      Colors.background,
+  },
 
   /* Navbar */
 
@@ -218,8 +215,8 @@ const styles = StyleSheet.create({
 
     paddingTop: 38,
 
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 18,
+    borderBottomLeftRadius: 22,
+    borderBottomRightRadius: 22,
 
     elevation: 8,
 
@@ -233,6 +230,4 @@ const styles = StyleSheet.create({
 
     fontWeight: 'bold',
   },
-
-
 })

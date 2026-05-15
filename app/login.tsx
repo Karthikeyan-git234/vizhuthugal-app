@@ -22,68 +22,120 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false)
 
 const handleLogin = async () => {
+
+  // Empty validation
+
+  if (!email || !password) {
+
+    Alert.alert(
+      'Missing Fields',
+      'Enter email and password'
+    )
+
+    return
+  }
+
+  // Demo Login
+
+  if (
+    email ===
+      'resource@gmail.com' &&
+
+    password === 'Resource1'
+  ) {
+
+    Alert.alert(
+      'Login Success',
+      'Welcome Resource User'
+    )
+
+    router.replace('/home')
+
+    return
+  }
+
   // Email validation
+
   if (!email.includes('@gmail.com')) {
+
     Alert.alert(
       'Invalid Email',
       'Enter valid Gmail address'
-    );
-    return;
+    )
+
+    return
   }
 
   // Password validation
+
   if (password.length < 8) {
+
     Alert.alert(
       'Invalid Password',
       'Password must be minimum 8 characters'
-    );
-    return;
+    )
+
+    return
   }
 
   try {
-    setLoading(true);
+
+    setLoading(true)
 
     // API call
-    const res = await API.post('/auth/login', {
-      email,
-      password,
-    });
 
-    setLoading(false);
+    const res = await API.post(
+      '/auth/login',
+      {
+        email,
+        password,
+      }
+    )
 
-    // Success alert
+    setLoading(false)
+
     Alert.alert(
       'Success',
       res.data.message
-    );
+    )
 
-    // Navigate to home
-    router.replace('/home');
+    router.replace('/home')
+
   } catch (error: any) {
-    setLoading(false);
 
-   if (
-  error.response?.data?.message ===
-  'User not found'
-) {
-  Alert.alert(
-    'User Not Found',
-    'Please register first',
-    [
-      {
-        text: 'Register',
-        onPress: () =>
-          router.push('/register'),
-      },
-    ]
-  );
-} else {
-  Alert.alert(
-    'Login Failed',
-    error.response?.data?.message ||
-      'Something went wrong'
-  );
-}
+    setLoading(false)
+
+    if (
+      error.response?.data
+        ?.message ===
+      'User not found'
+    ) {
+
+      Alert.alert(
+        'User Not Found',
+        'Please register first',
+        [
+          {
+            text: 'Register',
+
+            onPress: () =>
+              router.push(
+                '/register'
+              ),
+          },
+        ]
+      )
+
+    } else {
+
+      Alert.alert(
+        'Login Failed',
+
+        error.response?.data
+          ?.message ||
+          'Something went wrong'
+      )
+    }
   }
 };
 
@@ -157,6 +209,24 @@ const handleLogin = async () => {
             />
           </TouchableOpacity>
         </View>
+
+{/* Demo Credentials */}
+
+<View style={styles.demoBox}>
+  
+  <Text style={styles.demoTitle}>
+    Demo Login
+  </Text>
+
+  <Text style={styles.demoText}>
+    Email: resource@gmail.com
+  </Text>
+
+  <Text style={styles.demoText}>
+    Password: Resource1
+  </Text>
+
+</View>
 
         {/* Forgot Password */}
         <TouchableOpacity
@@ -318,4 +388,33 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: 'bold',
   },
+  demoBox: {
+  backgroundColor: '#eff6ff',
+
+  padding: 14,
+
+  borderRadius: 14,
+
+  marginBottom: 18,
+
+  borderWidth: 1,
+
+  borderColor: '#bfdbfe',
+},
+
+demoTitle: {
+  fontSize: 15,
+
+  fontWeight: 'bold',
+
+  color: Colors.primary,
+
+  marginBottom: 6,
+},
+
+demoText: {
+  fontSize: 14,
+
+  color: Colors.black,
+},
 })

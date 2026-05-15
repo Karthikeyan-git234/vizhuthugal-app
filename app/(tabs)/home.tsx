@@ -102,6 +102,64 @@ export default function HomeScreen() {
 
       </TouchableOpacity>
 
+{/* Employee Profile */}
+
+      <TouchableOpacity
+  style={styles.moduleCard}
+  activeOpacity={0.8}
+  onPress={() =>
+    router.push('/employeeprofile')
+  }
+>
+
+        <View style={styles.moduleLeft}>
+
+          <View
+            style={[
+              styles.moduleIconBox,
+              {
+                backgroundColor:
+                  '#8b5cf6',
+              },
+            ]}
+          >
+
+            <Ionicons
+              name="person"
+              size={24}
+              color={Colors.white}
+            />
+
+          </View>
+
+          <View>
+
+            <Text
+              style={styles.moduleTitle}
+            >
+              Employee Profile
+            </Text>
+
+            <Text
+              style={
+                styles.moduleSubTitle
+              }
+            >
+              Employee profile details
+            </Text>
+
+          </View>
+
+        </View>
+
+        <Ionicons
+          name="chevron-forward"
+          size={22}
+          color={Colors.gray}
+        />
+
+      </TouchableOpacity>
+
       {/* Daily Report */}
 
       <TouchableOpacity
@@ -156,60 +214,7 @@ export default function HomeScreen() {
 
       </TouchableOpacity>
 
-      {/* Profile */}
-
-      <TouchableOpacity
-        style={styles.moduleCard}
-      >
-
-        <View style={styles.moduleLeft}>
-
-          <View
-            style={[
-              styles.moduleIconBox,
-              {
-                backgroundColor:
-                  '#8b5cf6',
-              },
-            ]}
-          >
-
-            <Ionicons
-              name="person"
-              size={24}
-              color={Colors.white}
-            />
-
-          </View>
-
-          <View>
-
-            <Text
-              style={styles.moduleTitle}
-            >
-              Profile
-            </Text>
-
-            <Text
-              style={
-                styles.moduleSubTitle
-              }
-            >
-              Employee profile details
-            </Text>
-
-          </View>
-
-        </View>
-
-        <Ionicons
-          name="chevron-forward"
-          size={22}
-          color={Colors.gray}
-        />
-
-      </TouchableOpacity>
-
+      
       {/* Stats Card */}
 
       <View style={styles.statsCard}>

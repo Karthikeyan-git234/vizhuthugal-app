@@ -35,6 +35,9 @@ import Navbar from '../components/Navbar'
 
 import Colors from '../constants/colors'
 
+const BASE_URL =
+  'https://vizhuthugal-backend-3jmj.onrender.com'
+
 export default function EmployeeProfileScreen() {
 
   const [employees, setEmployees] =
@@ -78,7 +81,7 @@ export default function EmployeeProfileScreen() {
 
       const res =
         await axios.get(
-          'http://192.168.0.139:5000/api/employees'
+          `${BASE_URL}/api/employees`
         )
 
       setEmployees(res.data)
@@ -134,7 +137,7 @@ export default function EmployeeProfileScreen() {
 
               await axios.delete(
 
-                `http://192.168.0.139:5000/api/employees/${id}`
+                `${BASE_URL}/api/employees/${id}`
 
               )
 
@@ -268,7 +271,7 @@ export default function EmployeeProfileScreen() {
 
         await axios.put(
 
-          `http://192.168.0.139:5000/api/employees/${editId}`,
+          `${BASE_URL}/api/employees/${editId}`,
 
           {
             name,
@@ -285,7 +288,7 @@ export default function EmployeeProfileScreen() {
 
         await axios.post(
 
-          'http://192.168.0.139:5000/api/employees',
+          `${BASE_URL}/api/employees`,
 
           {
             name,

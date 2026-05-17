@@ -44,98 +44,128 @@ export default function LoginScreen() {
   // LOGIN
   // =====================================
 
-  const handleLogin =
-    async () => {
+ const handleLogin =
+  async () => {
 
-      // Empty Validation
+    // Empty Validation
 
-      if (
-        !email ||
-        !password
-      ) {
+    if (
+      !email ||
+      !password
+    ) {
 
-        Alert.alert(
-          'Missing Fields',
-          'Enter email and password'
-        )
+      Alert.alert(
+        'Missing Fields',
+        'Enter email and password'
+      )
 
-        return
-      }
-
-      // Email Validation
-
-      const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-      if (
-        !emailRegex.test(email)
-      ) {
-
-        Alert.alert(
-          'Invalid Email',
-          'Enter valid email address'
-        )
-
-        return
-      }
-
-      // Password Validation
-
-      if (
-        password.length < 6
-      ) {
-
-        Alert.alert(
-          'Invalid Password',
-          'Password must be minimum 6 characters'
-        )
-
-        return
-      }
-
-      setLoading(true)
-
-      try {
-
-        const res =
-          await API.post(
-
-            '/auth/login',
-
-            {
-              email,
-              password,
-            }
-
-          )
-
-        setLoading(false)
-
-        Alert.alert(
-          'Success',
-          res.data.message
-        )
-
-        router.replace(
-          '/home'
-        )
-
-      } catch (error: any) {
-
-        setLoading(false)
-
-        Alert.alert(
-
-          'Login Failed',
-
-          error.response?.data
-            ?.message ||
-
-          'Something went wrong'
-
-        )
-      }
+      return
     }
+
+    // Email Validation
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (
+      !emailRegex.test(email)
+    ) {
+
+      Alert.alert(
+        'Invalid Email',
+        'Enter valid email address'
+      )
+
+      return
+    }
+
+    // Password Validation
+
+    if (
+      password.length < 6
+    ) {
+
+      Alert.alert(
+        'Invalid Password',
+        'Password must be minimum 6 characters'
+      )
+
+      return
+    }
+
+    setLoading(true)
+
+    try {
+
+      console.log(
+        'LOGIN API:',
+        'https://vizhuthugal-backend-3jmj.onrender.com/api/auth/login'
+      )
+
+      const res =
+        await API.post(
+
+          '/auth/login',
+
+          {
+            email:
+              email.trim(),
+
+            password:
+              password.trim(),
+          }
+
+        )
+
+      console.log(
+        'LOGIN SUCCESS:',
+        res.data
+      )
+
+      setLoading(false)
+
+      Alert.alert(
+        'Success',
+        res.data.message
+      )
+
+      router.replace(
+        '/home'
+      )
+
+    } catch (error: any) {
+
+      console.log(
+        'FULL LOGIN ERROR:',
+        error
+      )
+
+      console.log(
+        'ERROR RESPONSE:',
+        error.response?.data
+      )
+
+      console.log(
+        'ERROR MESSAGE:',
+        error.message
+      )
+
+      setLoading(false)
+
+      Alert.alert(
+
+        'Login Failed',
+
+        error.response?.data
+          ?.message ||
+
+        error.message ||
+
+        'Something went wrong'
+
+      )
+    }
+  }
 
   // =====================================
   // FORGOT PASSWORD

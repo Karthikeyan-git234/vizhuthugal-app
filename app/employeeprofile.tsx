@@ -852,8 +852,8 @@ export default function EmployeeProfileScreen() {
                       selectedDate.getFullYear()
 
                     setJoiningDate(
-                      `${day}/${month}/${year}`
-                    )
+                      `${year}-${month}-${day}`
+                     )
                   }
                 }}
               />

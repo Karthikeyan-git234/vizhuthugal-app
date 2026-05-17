@@ -4,7 +4,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-
+import Navbar from '../components/Navbar'
 import API from '../services/api'
 
 import DateTimePicker from '@react-native-community/datetimepicker'
